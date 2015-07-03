@@ -1,4 +1,0 @@
- List:
-     #foreach($member in $members)
-       <li>$member.email - $member.firstname $member.lastname</li>
-     #end  
