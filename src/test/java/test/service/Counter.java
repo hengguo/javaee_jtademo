@@ -8,8 +8,6 @@
 */
 package test.service;
 
-import javax.jms.IllegalStateException;
-
 /**
  * @Package test.service 
  * @author Wang.Hengguo

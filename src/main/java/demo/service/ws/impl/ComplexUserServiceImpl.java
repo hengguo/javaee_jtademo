@@ -6,7 +6,7 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
-import demo.domain.User;
+import demo.domain.user.User;
 import demo.service.ws.ComplexUserService;
 
 

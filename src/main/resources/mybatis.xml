@@ -13,6 +13,8 @@
 	<typeAliases>
 		<!--给实体类起一个别名 user -->
 		<typeAlias alias="Page" type="demo.common.page.Page" />
+		<typeAlias alias="User" type="demo.domain.user.User" />
+		<typeAlias alias="Order" type="demo.domain.order.Order" />
 
 	</typeAliases>
 

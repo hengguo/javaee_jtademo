@@ -16,9 +16,8 @@
 		<!-- <context:exclude-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect" 
 			/> -->
 	</context:component-scan>
-	<aop:aspectj-autoproxy proxy-target-class="true" />
+
 	<context:annotation-config />
-	<!-- <context:property-placeholder location="classpath:config.properties"/> -->
 
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -27,184 +26,130 @@
 		</property>
 	</bean>
 
-	<!-- <import resource="classpath*:/spring/mq-message.xml" /> -->
-	<!-- <import resource="classpath*:/spring/redis-context.xml" /> -->
-	<import resource="classpath*:/spring/spring-ws.xml" />
+	<!-- 两个数据源的功用配置，方便下面直接引用 -->
+	<bean id="abstractXADataSource" class="com.atomikos.jdbc.AtomikosDataSourceBean"
+		init-method="init" destroy-method="close" abstract="true">
+		<property name="xaDataSourceClassName"
+			value="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" />
+		<property name="poolSize" value="10" />
+		<property name="minPoolSize" value="10" />
+		<property name="maxPoolSize" value="30" />
+		<property name="borrowConnectionTimeout" value="60" />
+		<property name="reapTimeout" value="20" />
+		<!-- 最大空闲时间 -->
+		<property name="maxIdleTime" value="60" />
+		<property name="maintenanceInterval" value="60" />
+		<property name="loginTimeout" value="60" />
+		<property name="logWriter" value="60" />
+		<property name="testQuery">
+			<value>select 1</value>
+		</property>
 
-	<bean id="defaultDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
-		destroy-method="close">
-		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
-		<property name="jdbcUrl"
-			value="jdbc:mysql://localhost:3306/test?characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"></property>
-		<property name="user" value="root"></property>
-		<property name="password" value="root"></property>
-		<property name="minPoolSize">
-			<value>1</value>
-		</property>
-		<property name="maxPoolSize">
-			<value>10</value>
-		</property>
-		<property name="maxIdleTime">
-			<value>1800</value>
-		</property>
-		<property name="acquireIncrement">
-			<value>2</value>
-		</property>
-		<property name="maxStatements">
-			<value>0</value>
-		</property>
-		<property name="initialPoolSize">
-			<value>2</value>
-		</property>
-		<property name="idleConnectionTestPeriod">
-			<value>1800</value>
-		</property>
-		<property name="acquireRetryAttempts">
-			<value>120</value>
-		</property>
-		<property name="breakAfterAcquireFailure">
-			<value>true</value>
+	</bean>
+	<!-- 配置第一个数据源 -->
+	<bean id="dataSource" parent="abstractXADataSource">
+		<!-- value只要两个数据源不同就行，随便取名 -->
+		<property name="uniqueResourceName" value="mysql/test" />
+		<property name="xaDataSourceClassName"
+			value="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" />
+		<property name="xaProperties">
+			<props>
+				<prop key="URL">${jdbc.url}</prop>
+				<prop key="user">${jdbc.username}</prop>
+				<prop key="password">${jdbc.password}</prop>
+			</props>
 		</property>
 	</bean>
-	<bean id="dataSource1" class="com.mchange.v2.c3p0.ComboPooledDataSource"
-		destroy-method="close">
-		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
-		<property name="jdbcUrl"
-			value="jdbc:mysql://localhost:3306/test?characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"></property>
-		<property name="user" value="root"></property>
-		<property name="password" value="root"></property>
-		<property name="minPoolSize">
-			<value>1</value>
-		</property>
-		<property name="maxPoolSize">
-			<value>10</value>
-		</property>
-		<property name="maxIdleTime">
-			<value>1800</value>
-		</property>
-		<property name="acquireIncrement">
-			<value>2</value>
-		</property>
-		<property name="maxStatements">
-			<value>0</value>
-		</property>
-		<property name="initialPoolSize">
-			<value>2</value>
-		</property>
-		<property name="idleConnectionTestPeriod">
-			<value>1800</value>
-		</property>
-		<property name="acquireRetryAttempts">
-			<value>120</value>
-		</property>
-		<property name="breakAfterAcquireFailure">
-			<value>true</value>
-		</property>
-	</bean>
-	<bean id="dataSource2" class="com.mchange.v2.c3p0.ComboPooledDataSource"
-		destroy-method="close">
-		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
-		<property name="jdbcUrl"
-			value="jdbc:mysql://localhost:3306/test2?characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"></property>
-		<property name="user" value="root"></property>
-		<property name="password" value="root"></property>
-		<property name="minPoolSize">
-			<value>1</value>
-		</property>
-		<property name="maxPoolSize">
-			<value>10</value>
-		</property>
-		<property name="maxIdleTime">
-			<value>1800</value>
-		</property>
-		<property name="acquireIncrement">
-			<value>2</value>
-		</property>
-		<property name="maxStatements">
-			<value>0</value>
-		</property>
-		<property name="initialPoolSize">
-			<value>2</value>
-		</property>
-		<property name="idleConnectionTestPeriod">
-			<value>1800</value>
-		</property>
-		<property name="acquireRetryAttempts">
-			<value>120</value>
-		</property>
-		<property name="breakAfterAcquireFailure">
-			<value>true</value>
+
+	<!-- 配置第二个数据源 -->
+	<bean id="dataSourceB" parent="abstractXADataSource">
+		<!-- value只要两个数据源不同就行，随便取名 -->
+		<property name="uniqueResourceName" value="mysql/test2" />
+		<property name="xaDataSourceClassName"
+			value="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" />
+		<property name="xaProperties">
+			<props>
+				<prop key="URL">${jdbca.url}</prop>
+				<prop key="user">${jdbca.username}</prop>
+				<prop key="password">${jdbca.password}</prop>
+			</props>
 		</property>
 	</bean>
 
 	<!-- 配置mybatisSqlSessionFactoryBean -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="mapperLocations" value="classpath:mapper/*.xml" />
-		<property name="typeAliasesPackage" value="demo.domain" />
-		<property name="dataSourceFactory" ref="dataSourceFactory" />
+		<property name="mapperLocations" value="classpath:mapper/user/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="demo.doamin.user"></property>
 		<property name="configLocation" value="classpath:mybatis.xml"></property>
 	</bean>
-
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="demo.mapper"></property>
+	<bean id="sqlSessionFactoryB" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="mapperLocations" value="classpath:mapper/order/*.xml" />
+		<property name="dataSource" ref="dataSourceB" />
+		<property name="typeAliasesPackage" value="demo.doamin.order"></property>
+		<property name="configLocation" value="classpath:mybatis.xml"></property>
+	</bean>
+	<bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="demo.mapper.user"></property>
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
 	</bean>
-
-	<bean id="txManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSourceFactory" ref="dataSourceFactory" />
+	<bean id="mapperScannerB" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="demo.mapper.order"></property>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryB"></property>
 	</bean>
 
-	<bean id="dataSourceFactory" class="demo.common.DataSourceFactory">
+	<!-- 事务这块用spring管理atomikos -->
+	<bean id="atomikosTransactionManager" class="com.atomikos.icatch.jta.UserTransactionManager"
+		init-method="init" destroy-method="close">
+		<property name="forceShutdown">
+			<value>true</value>
+		</property>
+	</bean>
+	<bean id="atomikosUserTransaction" class="com.atomikos.icatch.jta.UserTransactionImp">
+		<property name="transactionTimeout" value="300" />
 	</bean>
 
-	<!--配置事务处理策略，transaction-manager属性指定事务管理器。 若事务管理器bean的id即为transactionManager，则 
-		transaction-manager的属性可以不指定 -->
-	<tx:advice id="txAdvice" transaction-manager="txManager">
-		<tx:attributes>
-			<tx:method name="add*" propagation="REQUIRED" />
-			<tx:method name="create*" propagation="REQUIRED" />
-			<tx:method name="insert*" propagation="REQUIRED" />
-			<tx:method name="update*" propagation="REQUIRED" />
-			<tx:method name="merge*" propagation="REQUIRED" />
-			<tx:method name="del*" propagation="REQUIRED" />
-			<tx:method name="remove*" propagation="REQUIRED" />
-			<tx:method name="put*" propagation="REQUIRED" />
-			<tx:method name="use*" propagation="REQUIRED" />
-			<tx:method name="handle*" propagation="REQUIRED" />
-			<tx:method name="rollbackOper" propagation="REQUIRED"
-				read-only="true" />
+	<bean id="springTransactionManager"
+		class="org.springframework.transaction.jta.JtaTransactionManager">
+		<property name="transactionManager">
+			<ref bean="atomikosTransactionManager" />
+		</property>
+		<property name="userTransaction">
+			<ref bean="atomikosUserTransaction" />
+		</property>
+		<!-- 必须设置，否则程序出现异常 JtaTransactionManager does not support custom isolation 
+			levels by default -->
+		<property name="allowCustomIsolationLevels" value="true" />
 
-			<tx:method name="get*" propagation="REQUIRED" read-only="true" />
-			<tx:method name="count*" propagation="REQUIRED" read-only="true" />
-			<tx:method name="find*" propagation="REQUIRED" read-only="true" />
-			<tx:method name="list*" propagation="REQUIRED" read-only="true" />
-			<tx:method name="*" />
-			<!--其他方法使用默认事务策略 -->
-			<tx:method name="*" />
-		</tx:attributes>
-	</tx:advice>
+	</bean>
+	<!-- 支持 @AspectJ 标记 -->
+	<aop:aspectj-autoproxy />
 
-	<!-- AOP配置 -->
-	<aop:config>
-		<!--pointcut元素定义一个切入点，execution中的第一个星号 用以匹配方法的返回类型，这里星号表明匹配所有返回类型。 com.abc.dao.*.*(..)表明匹配com.abc.dao包下的所有类的所有 
-			方法 -->
-		<aop:pointcut id="myPointcut" expression="execution(* demo.service.*.*(..))" />
-		<!--将定义好的事务处理策略应用到上述的切入点 -->
-		<aop:advisor advice-ref="txAdvice" pointcut-ref="myPointcut" />
+
+	<!-- 以AspectJ方式 定义 AOP -->
+	<aop:config proxy-target-class="true">
+		<aop:advisor pointcut="execution(* demo.service..*.*(..))"
+			advice-ref="txAdvice" />
 	</aop:config>
 
-	<!-- <bean id="maintenanceCodeAdvice" class="demo.common.bean.MaintenanceCodeAdvice" 
-		/> -->
-	<!-- <aop:config proxy-target-class="true"> -->
-	<!-- <aop:pointcut id="maintenanceCodePoint" expression="@annotation(demo.common.annotation.MaintenanceCode)" 
-		/> -->
-	<!-- <aop:advisor pointcut-ref="maintenanceCodePoint" advice-ref="maintenanceCodeAdvice" 
-		/> -->
-<!-- </aop:config> -->
-
-
-	<bean id="flightService" class="demo.service.impl.FlightServiceImpl"></bean>
+	<!-- 配置事务传播特性:如果存在一个事务，则支持当前事务。如果没有事务则开启：REQUIRED -->
+	<tx:advice id="txAdvice" transaction-manager="springTransactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="save*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="insert*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="create*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="del*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="update*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="modify*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
 
 
 
