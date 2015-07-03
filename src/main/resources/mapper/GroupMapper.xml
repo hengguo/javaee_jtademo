@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="demo.mapper.GroupMapper">
+	<resultMap type="Group" id="groupMap">
+		<id property="id" column="g_id"/>
+		<result property="name" column="g_name"/>
+		<result property="createTime" column="g_createdate"/>
+		<result property="state" column="g_state"/>
+	</resultMap>
+	<resultMap type="Group" id="groupUserMap" extends="groupMap">
+		<collection property="user" ofType="User" resultMap="demo.mapper.UserMapper.userGroupMap" />
+	</resultMap>
+	
+	<!-- 根据Group表中的id或name查询组信息和组内用户信息 -->
+	<select id="selectGroupUser" parameterType="Group"
+		resultMap="groupUserMap">
+		select 
+			*
+		from group_info gi left
+		join user_group ug on gi.g_id=ug.ug_g_id left join user u on
+		ug.ug_u_id=u.u_id
+		<where>
+			<!--当id为初始值0，不再使用id作为查询条件 -->
+			<if test="id != 0  ">gi.id=#{id}</if>
+			<!-- 当name为空或为空串时，不再使用name作为查询条件 -->
+			<if test="name != null and name != ''">
+				or gi.name = #{name}
+			</if>
+		</where>
+	</select>
+
+	<!-- 根据id查询group组信息 -->
+	<select id="selectGroup" parameterType="Date"
+		resultMap="groupMap">
+		select * from group_info where g_id=#{id}
+	</select>
+</mapper>

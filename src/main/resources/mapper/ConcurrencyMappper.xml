@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.ConcurrencyDao">
+	<select id="getBatchNumber" resultType="long">
+		select batch_number from hx_increment_config
+	</select>
+
+	<update id="updateIncrementBatchNumber">
+		update hx_increment_config set batch_number = batch_number+1;
+	</update>
+</mapper>

@@ -1,0 +1,79 @@
+[
+    {
+        "id": "001", 
+        "name": "菜单01", 
+        "pid": null, 
+        "url": null
+    }, 
+    {
+        "id": "00101", 
+        "name": "页面1", 
+        "pid": "001", 
+        "url": "/menu01/page1"
+    }, 
+    {
+        "id": "00102", 
+        "name": "jstl测试页面", 
+        "pid": "001", 
+        "url": "/flights/specials"
+    }, 
+    {
+        "id": "00103", 
+        "name": "可编辑表格行2", 
+        "pid": "001", 
+        "url": "/user/editableDatagridView2"
+    }, 
+    {
+        "id": "00104", 
+        "name": "Footer 表格", 
+        "pid": "001", 
+        "url": "/user/footerDataGridView"
+    }, 
+    {
+        "id": "00105", 
+        "name": "AutoComplete例子", 
+        "pid": "001", 
+        "url": "/menu01/autocompleteView"
+    }, 
+    {
+        "id": "002", 
+        "name": "菜单02", 
+        "pid": null, 
+        "url": null
+    }, 
+    {
+        "id": "00201", 
+        "name": "动态生成datagrid列", 
+        "pid": "002", 
+        "url": "/user/dynamicUserView"
+    }, 
+    {
+        "id": "00202", 
+        "name": "页面04", 
+        "pid": "002", 
+        "url": ""
+    }, 
+    {
+        "id": "00203", 
+        "name": "学习例子", 
+        "pid": "00202", 
+        "url": "/flights/specials"
+    }, 
+    {
+        "id": "00204", 
+        "name": "可编辑表格行1", 
+        "pid": "002", 
+        "url": "/user/editableDatagridView"
+    },{
+        "id": "003", 
+        "name": "菜单03", 
+        "pid": null, 
+        "url": null
+    }, 
+    {
+        "id": "00301", 
+        "name": "jasperreports 报表功能", 
+        "pid": "003", 
+        "url": "/jasper/demo1"
+    }
+]

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.CodeDao">
+	<resultMap id="hxCodeResult" type="demo.domain.Code">
+		<result property="codeId" column="code_id" jdbcType="VARCHAR"/>
+		<result property="codeName" column="code_name" jdbcType="VARCHAR"/>
+		<result property="codeKey" column="code_key" jdbcType="VARCHAR"/>
+		<result property="codeValue" column="code_value" jdbcType="VARCHAR"/>
+	</resultMap>
+	<select id="getAll" resultMap="hxCodeResult">
+		SELECT * FROM v_code
+	</select>
+	
+	<select id="getCodeByKey" resultMap="hxCodeResult" parameterType="string">
+		SELECT * FROM v_code where code_id=#{codeKey}
+	</select>
+	
+	<select id="getHxCodePageList" parameterType="Page" resultType="hashmap">
+		SELECT code_id codeId, code_name codeName FROM code where editable = 1
+	</select>
+	
+	<select id="getHxCodeSettingByCodeId" parameterType="string" resultType="hashmap">
+		SELECT code_id codeId, code_key codeKey, code_value codeValue from code_setting where code_id=#{codeId} order by code_key
+	</select>
+	
+	<select id="getOrgCombobox" resultType="hashmap">
+		select id, name from v_organization
+	</select>
+	
+	<select id="getList" parameterType="string" resultType="hashmap">
+		select * from code_setting where code_value like CONCAT('%',#{q},'%')
+	</select>
+	
+	<select id="getFittingMenu" parameterType="string" resultType="hashmap">
+		select t.fitting_auth_id id, t1.fitting_auth_name name
+		from hx_position_fitting t, hx_fitting_auth t1
+		where t.fitting_auth_id=t1.fitting_auth_id and t.position_id=#{positionId}
+	</select>
+	
+	<insert id="insertSetting" parameterType="demo.domain.Code">
+		insert into code_setting values(#{codeId},#{codeKey},#{codeValue})
+	</insert>
+</mapper>
