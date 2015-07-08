@@ -274,6 +274,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>springmvc_demo</finalName>
+		<finalName>jtademo</finalName>
 	</build>
 </project>

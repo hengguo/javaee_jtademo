@@ -34,9 +34,10 @@ public class JTATest {
     @Test
     public void addUseOrder(){
         User u = new User();
-        u.setId(1001);
+        u.setId(1002);
         u.setName("Andrew");
         Order o = new Order();
+        o.setId("o_2");
         o.setName("Nike Shoes");
         userOrderService.addUserOrder(u, o);
     }

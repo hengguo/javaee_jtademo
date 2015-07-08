@@ -5,6 +5,6 @@
 <mapper namespace="demo.mapper.order.OrderMapper">
 
     <insert id="addOrder" parameterType="Order">
-    	insert into order(id, name, num, userId, userName) values(#{id}, #{name}, #{num}, #{userId}, #{userName})
+    	insert into t_order(id, name, num, userId, userName) values(#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR})
     </insert>
 </mapper>

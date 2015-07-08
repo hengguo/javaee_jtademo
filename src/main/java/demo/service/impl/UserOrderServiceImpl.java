@@ -30,6 +30,8 @@ public class UserOrderServiceImpl implements UserOrderService {
     @Override
     public void addUserOrder(User user, Order order) {
         userDao.addUser(user);
+        if(2>1)
+        throw new RuntimeException("RuntimeException");
         orderDao.addOrder(order);
     }
 
